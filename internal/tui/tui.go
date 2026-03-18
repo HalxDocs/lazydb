@@ -55,7 +55,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
-		sidebarWidth := 24
+		sidebarWidth := 28
 		mainWidth := m.width - sidebarWidth
 		mainHeight := m.height - 3
 		m.sidebar = NewSidebar(sidebarWidth, mainHeight)

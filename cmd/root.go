@@ -16,8 +16,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "lazydb",
 	Short: "A terminal UI for your database",
-	Long: `lazydb is a fast, keyboard-driven terminal UI for Postgres, MySQL and SQLite.
-Browse tables, run queries and inspect your database — all from your terminal.`,
+	Long: "",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if dsn == "" {
 			return fmt.Errorf("--dsn is required\n\nexamples:\n  lazydb --driver postgres --dsn \"postgres://user:pass@localhost:5432/mydb\"\n  lazydb --driver sqlite  --dsn ./mydb.sqlite")

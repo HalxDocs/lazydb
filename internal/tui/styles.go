@@ -17,28 +17,30 @@ var (
 	colorTextDim    = lipgloss.Color("#8892B0")
 
 	// Sidebar
-	SidebarStyle = lipgloss.NewStyle().
-			Width(22).
-			Background(lipgloss.Color("#0E1220")).
-			BorderRight(true).
-			BorderStyle(lipgloss.NormalBorder()).
-			BorderForeground(colorBorder)
+SidebarStyle = lipgloss.NewStyle().
+		Width(26).
+		Background(lipgloss.Color("#0E1220")).
+		BorderRight(true).
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(colorBorder).
+		PaddingLeft(1).
+		PaddingRight(1)
 
-	SidebarTitleStyle = lipgloss.NewStyle().
-				Foreground(colorMuted).
-				Background(lipgloss.Color("#0E1220")).
-				PaddingLeft(1).
-				Bold(false)
+SidebarTitleStyle = lipgloss.NewStyle().
+		Foreground(colorMuted).
+		Background(lipgloss.Color("#0E1220")).
+		PaddingLeft(1).
+		Bold(false)
 
-	SidebarItemStyle = lipgloss.NewStyle().
-				Foreground(colorSecondary).
-				Background(lipgloss.Color("#0E1220")).
-				PaddingLeft(2)
+SidebarItemStyle = lipgloss.NewStyle().
+		Foreground(colorSecondary).
+		Background(lipgloss.Color("#0E1220")).
+		PaddingLeft(1)
 
-	SidebarItemActiveStyle = lipgloss.NewStyle().
-				Foreground(colorPrimary).
-				Background(lipgloss.Color("#1A2540")).
-				PaddingLeft(2)
+SidebarItemActiveStyle = lipgloss.NewStyle().
+		Foreground(colorPrimary).
+		Background(lipgloss.Color("#1A2540")).
+		PaddingLeft(1)
 
 	// Toolbar
 	ToolbarStyle = lipgloss.NewStyle().
