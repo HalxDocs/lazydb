@@ -86,3 +86,9 @@ func (s *SQLite) Rows(table string, limit int) (*sql.Rows, error) {
 func (s *SQLite) Query(query string) (*sql.Rows, error) {
 	return s.conn.Query(query)
 }
+
+func (s *SQLite) CountRows(table string) (int, error) {
+	var count int
+	err := s.conn.QueryRow(fmt.Sprintf("SELECT COUNT(*) FROM %s", table)).Scan(&count)
+	return count, err
+}
