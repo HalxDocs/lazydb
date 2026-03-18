@@ -103,4 +103,16 @@ SidebarItemActiveStyle = lipgloss.NewStyle().
 	ErrorStyle = lipgloss.NewStyle().
 			Foreground(colorError).
 			PaddingLeft(1)
+
+	// Table extras
+	TableDividerStyle = lipgloss.NewStyle().
+				Foreground(colorBorder)
+
+	RowCursorStyle = lipgloss.NewStyle().
+			Foreground(colorPrimary)
+
+	RowCountStyle = lipgloss.NewStyle().
+			Foreground(colorMuted).
+			PaddingLeft(1)		
+
 )
