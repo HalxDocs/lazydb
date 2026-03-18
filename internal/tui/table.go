@@ -107,10 +107,13 @@ func (t TableView) colWidth() int {
 	if len(t.columns) == 0 {
 		return 20
 	}
-	available := t.width - 24
+	available := t.width - 4
 	w := available / len(t.columns)
-	if w < 10 {
-		return 10
+	if w < 12 {
+		return 12
+	}
+	if w > 24 {
+		return 24
 	}
 	return w
 }
