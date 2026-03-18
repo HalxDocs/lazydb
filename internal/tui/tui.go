@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/HalxDocs/lazydb/internal/db"
@@ -70,14 +71,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
-	case rowsLoadedMsg:
-		if sqlRows, ok := msg.rows.(rowsResult); ok {
-			if err := m.tableView.Load(sqlRows.rows); err != nil {
+case rowsLoadedMsg:
+	if sqlRows, ok := msg.rows.(rowsResult); ok {
+		if realRows, ok := sqlRows.rows.(*sql.Rows); ok {
+			if err := m.tableView.Load(realRows); err != nil {
 				m.err = err
 			}
-			sqlRows.rows.Close()
+			realRows.Close()
 		}
-		return m, nil
+	}
+	return m, nil
 
 	case errMsg:
 		m.err = msg.err
