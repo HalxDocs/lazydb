@@ -81,3 +81,9 @@ func (m *MySQL) Rows(table string, limit int) (*sql.Rows, error) {
 func (m *MySQL) Query(query string) (*sql.Rows, error) {
 	return m.conn.Query(query)
 }
+
+func (m *MySQL) CountRows(table string) (int, error) {
+	var count int
+	err := m.conn.QueryRow(fmt.Sprintf("SELECT COUNT(*) FROM %s", table)).Scan(&count)
+	return count, err
+}
