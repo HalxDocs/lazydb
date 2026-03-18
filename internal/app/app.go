@@ -10,7 +10,6 @@ import (
 )
 
 func Run(driver, dsn string) error {
-	// connect to database
 	database := db.New(db.Config{
 		Driver: driver,
 		DSN:    dsn,
@@ -25,9 +24,8 @@ func Run(driver, dsn string) error {
 	}
 	defer database.Close()
 
-	// start TUI
 	model := tui.NewModel(database)
-	p := tea.NewProgram(model, tea.WithAltScreen())
+	p := tea.NewProgram(model, tea.WithAltScreen(), tea.WithMouseCellMotion())
 	if _, err := p.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

@@ -76,10 +76,12 @@ case rowsLoadedMsg:
 		if realRows, ok := sqlRows.rows.(*sql.Rows); ok {
 			if err := m.tableView.Load(realRows); err != nil {
 				m.err = err
+				return m, nil
 			}
 			realRows.Close()
 		}
 	}
+	m.status = fmt.Sprintf("%d tables · %d rows loaded", len(m.sidebar.tables), len(m.tableView.rows))
 	return m, nil
 
 	case errMsg:
