@@ -10,6 +10,7 @@ type DB interface {
 	Columns(table string) ([]Column, error)
 	Rows(table string, limit int) (*sql.Rows, error)
 	Query(query string) (*sql.Rows, error)
+	CountRows(table string) (int, error)
 }
 
 // Column holds metadata about a single table column
