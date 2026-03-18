@@ -66,22 +66,31 @@ func (t *TableView) MoveDown() {
 
 func (t TableView) Render() string {
 	if len(t.columns) == 0 {
-		return ErrorStyle.Render("no data — select a table from the sidebar")
+		return ErrorStyle.Render("\n  no data — select a table from the sidebar")
 	}
 
-	colWidth := t.colWidth()
+	colW := t.colWidth()
 	var b strings.Builder
 
-	// Header
+	// header
 	header := ""
 	for _, col := range t.columns {
-		header += TableHeaderStyle.Width(colWidth).Render(truncate(col, colWidth-2)) + " "
+		header += TableHeaderStyle.Width(colW).Render(truncate(col, colW-2)) + " "
 	}
 	b.WriteString(header + "\n")
-	b.WriteString(strings.Repeat("─", t.width-24) + "\n")
 
-	// Rows
-	visibleRows := t.height - 4
+	// divider
+	totalWidth := (colW+1)*len(t.columns)
+	if totalWidth > t.width-28 {
+		totalWidth = t.width - 28
+	}
+	b.WriteString(TableDividerStyle.Render(strings.Repeat("─", totalWidth)) + "\n")
+
+	// visible rows
+	visibleRows := t.height - 5
+	if visibleRows < 1 {
+		visibleRows = 1
+	}
 	start := 0
 	if t.cursor >= visibleRows {
 		start = t.cursor - visibleRows + 1
@@ -90,14 +99,30 @@ func (t TableView) Render() string {
 	for i := start; i < len(t.rows) && i < start+visibleRows; i++ {
 		row := t.rows[i]
 		line := ""
+		isSelected := i == t.cursor
+
+		// row number indicator
+		if isSelected {
+			line += RowCursorStyle.Render("▶ ")
+		} else {
+			line += RowCursorStyle.Render("  ")
+		}
+
 		for _, cell := range row {
-			if i == t.cursor {
-				line += TableCellActiveStyle.Width(colWidth).Render(truncate(cell, colWidth-2)) + " "
+			if isSelected {
+				line += TableCellActiveStyle.Width(colW).Render(truncate(cell, colW-2)) + " "
 			} else {
-				line += TableCellStyle.Width(colWidth).Render(truncate(cell, colWidth-2)) + " "
+				line += TableCellStyle.Width(colW).Render(truncate(cell, colW-2)) + " "
 			}
 		}
 		b.WriteString(line + "\n")
+	}
+
+	// row counter at bottom
+	if len(t.rows) > 0 {
+		b.WriteString("\n" + RowCountStyle.Render(
+			fmt.Sprintf("  row %d of %d", t.cursor+1, len(t.rows)),
+		))
 	}
 
 	return b.String()
