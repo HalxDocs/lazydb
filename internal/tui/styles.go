@@ -115,4 +115,12 @@ SidebarItemActiveStyle = lipgloss.NewStyle().
 			Foreground(colorMuted).
 			PaddingLeft(1)		
 
+    SidebarCountStyle = lipgloss.NewStyle().
+				Foreground(colorMuted).
+				Background(lipgloss.Color("#0E1220"))
+
+	SidebarCountActiveStyle = lipgloss.NewStyle().
+				Foreground(colorPrimary).
+				Background(lipgloss.Color("#1A2540"))			
+
 )
