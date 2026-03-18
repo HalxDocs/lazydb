@@ -87,3 +87,9 @@ func (p *Postgres) Rows(table string, limit int) (*sql.Rows, error) {
 func (p *Postgres) Query(query string) (*sql.Rows, error) {
 	return p.conn.Query(query)
 }
+
+func (p *Postgres) CountRows(table string) (int, error) {
+	var count int
+	err := p.conn.QueryRow(fmt.Sprintf("SELECT COUNT(*) FROM %s", table)).Scan(&count)
+	return count, err
+}
