@@ -5,11 +5,10 @@ import (
 	"fmt"
 
 	"github.com/HalxDocs/lazydb/internal/db"
-	"github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
-// Mode represents what the user is currently doing
 type Mode int
 
 const (
@@ -17,7 +16,6 @@ const (
 	ModeQuery
 )
 
-// Model is the root bubbletea model
 type Model struct {
 	db        db.DB
 	sidebar   Sidebar
@@ -31,8 +29,7 @@ type Model struct {
 	ready     bool
 }
 
-// messages
-type tablesLoadedMsg struct{ tables []string }
+type tablesLoadedMsg struct{ tables []TableMeta }
 type rowsLoadedMsg struct{ rows interface{} }
 type errMsg struct{ err error }
 
@@ -67,41 +64,37 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.sidebar.SetTables(msg.tables)
 		m.status = fmt.Sprintf("%d tables", len(msg.tables))
 		if len(msg.tables) > 0 {
-			return m, m.loadRows(msg.tables[0])
+			return m, m.loadRows(msg.tables[0].Name)
 		}
 		return m, nil
 
-case rowsLoadedMsg:
-	if sqlRows, ok := msg.rows.(rowsResult); ok {
-		if realRows, ok := sqlRows.rows.(*sql.Rows); ok {
-			if err := m.tableView.Load(realRows); err != nil {
-				m.err = err
-				return m, nil
+	case rowsLoadedMsg:
+		if sqlRows, ok := msg.rows.(rowsResult); ok {
+			if realRows, ok := sqlRows.rows.(*sql.Rows); ok {
+				if err := m.tableView.Load(realRows); err != nil {
+					m.err = err
+					return m, nil
+				}
+				realRows.Close()
 			}
-			realRows.Close()
 		}
-	}
-	m.status = fmt.Sprintf("%d tables · %d rows loaded", len(m.sidebar.tables), len(m.tableView.rows))
-	return m, nil
+		m.status = fmt.Sprintf("%d tables · %d rows loaded", len(m.sidebar.tables), len(m.tableView.rows))
+		return m, nil
 
 	case errMsg:
 		m.err = msg.err
 		return m, nil
 
 	case tea.KeyMsg:
-		// query mode — route keys to input
 		if m.mode == ModeQuery {
 			return m.handleQueryMode(msg)
 		}
 		return m.handleNormalMode(msg)
 	}
 
-	// update query bar input when in query mode
 	if m.mode == ModeQuery {
 		var cmd tea.Cmd
-		updated := m.queryBar.input
-		updated, cmd = updated.Update(msg)
-		m.queryBar.input = updated
+		m.queryBar.input, cmd = m.queryBar.input.Update(msg)
 		return m, cmd
 	}
 
@@ -172,19 +165,13 @@ func (m Model) View() string {
 	}
 
 	if m.err != nil {
-		return ErrorStyle.Render(fmt.Sprintf("\n  error: %s\n  press esc to dismiss", m.err))
+		return ErrorStyle.Render(fmt.Sprintf("\n  error: %s\n\n  press esc to dismiss", m.err))
 	}
 
-	// sidebar
 	sidebar := m.sidebar.Render()
-
-	// main content
 	main := m.tableView.Render()
-
-	// join sidebar and main horizontally
 	body := lipgloss.JoinHorizontal(lipgloss.Top, sidebar, main)
 
-	// status bar
 	statusLeft := StatusBarTextStyle.Render(
 		fmt.Sprintf("  lazydb  •  %s  •  %s",
 			m.sidebar.SelectedTable(),
@@ -192,14 +179,13 @@ func (m Model) View() string {
 		),
 	)
 	statusRight := StatusBarTextStyle.Render("↑↓ rows  ←→ tables  / query  q quit  ")
+	spacer := lipgloss.NewStyle().
+		Width(m.width - lipgloss.Width(statusLeft) - lipgloss.Width(statusRight)).
+		Render("")
 	statusBar := StatusBarStyle.Width(m.width).Render(
-		lipgloss.JoinHorizontal(lipgloss.Top, statusLeft,
-			lipgloss.NewStyle().Width(m.width-lipgloss.Width(statusLeft)-lipgloss.Width(statusRight)).Render(""),
-			statusRight,
-		),
+		lipgloss.JoinHorizontal(lipgloss.Top, statusLeft, spacer, statusRight),
 	)
 
-	// query bar
 	queryBar := ""
 	if m.queryBar.IsVisible() {
 		queryBar = m.queryBar.Render()
@@ -208,17 +194,20 @@ func (m Model) View() string {
 	return lipgloss.JoinVertical(lipgloss.Left, body, queryBar, statusBar)
 }
 
-// commands
-
 type rowsResult struct {
 	rows interface{ Close() error }
 }
 
 func (m Model) loadTables() tea.Cmd {
 	return func() tea.Msg {
-		tables, err := m.db.Tables()
+		names, err := m.db.Tables()
 		if err != nil {
 			return errMsg{err}
+		}
+		tables := make([]TableMeta, len(names))
+		for i, name := range names {
+			count, _ := m.db.CountRows(name)
+			tables[i] = TableMeta{Name: name, Count: count}
 		}
 		return tablesLoadedMsg{tables}
 	}
