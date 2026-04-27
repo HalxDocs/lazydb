@@ -29,18 +29,87 @@ Think `lazygit` — but for Postgres, MySQL and SQLite.
 
 ## Install
 
+You don't need Go, gcc, or anything else — `lazydb` ships as a single static
+binary for every major OS.
+
+### Windows
+
+**Easiest — download and run:**
+
+1. Go to the [latest release](https://github.com/HalxDocs/lazydb/releases/latest).
+2. Download `lazydb-windows-amd64.exe`.
+3. Rename it to `lazydb.exe` and put it in a folder on your `PATH`
+   (e.g. `C:\Users\<you>\bin`), or run it from where you saved it.
+
+**One-line install in PowerShell:**
+```powershell
+$dest = "$env:USERPROFILE\bin"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+Invoke-WebRequest -Uri "https://github.com/HalxDocs/lazydb/releases/latest/download/lazydb-windows-amd64.exe" -OutFile "$dest\lazydb.exe"
+# add $dest to PATH if it isn't already, then:
+lazydb --help
+```
+
+**One-line install in Command Prompt:**
+```cmd
+mkdir "%USERPROFILE%\bin" 2>nul
+curl -L -o "%USERPROFILE%\bin\lazydb.exe" https://github.com/HalxDocs/lazydb/releases/latest/download/lazydb-windows-amd64.exe
+"%USERPROFILE%\bin\lazydb.exe" --help
+```
+
+### macOS
+
+```bash
+# Apple Silicon (M1/M2/M3/M4)
+curl -L https://github.com/HalxDocs/lazydb/releases/latest/download/lazydb-darwin-arm64 -o /usr/local/bin/lazydb
+chmod +x /usr/local/bin/lazydb
+
+# Intel
+curl -L https://github.com/HalxDocs/lazydb/releases/latest/download/lazydb-darwin-amd64 -o /usr/local/bin/lazydb
+chmod +x /usr/local/bin/lazydb
+```
+
+> macOS Gatekeeper may block the binary the first time. Run it once, then go
+> to *System Settings → Privacy & Security → "lazydb was blocked" → Open Anyway*,
+> or run `xattr -dr com.apple.quarantine /usr/local/bin/lazydb`.
+
+### Linux
+
+```bash
+# x86_64
+curl -L https://github.com/HalxDocs/lazydb/releases/latest/download/lazydb-linux-amd64 -o /usr/local/bin/lazydb
+sudo chmod +x /usr/local/bin/lazydb
+
+# arm64 (Raspberry Pi 4/5, Ampere, etc.)
+curl -L https://github.com/HalxDocs/lazydb/releases/latest/download/lazydb-linux-arm64 -o /usr/local/bin/lazydb
+sudo chmod +x /usr/local/bin/lazydb
+```
+
 ### Homebrew (macOS / Linux)
 ```bash
 brew install HalxDocs/tap/lazydb
 ```
 
-### Go install
+### Go install (for Go developers)
 ```bash
 go install github.com/HalxDocs/lazydb@latest
 ```
 
-### Download binary
-Grab the latest binary for your platform from the [releases page](https://github.com/HalxDocs/lazydb/releases).
+### Build from source
+```bash
+git clone https://github.com/HalxDocs/lazydb.git
+cd lazydb
+go build -o lazydb .
+./lazydb --help
+```
+
+### Verify the install
+```bash
+lazydb --help
+```
+You should see the usage banner. If "lazydb is not recognized," the binary
+isn't on your `PATH` — either move it into a `PATH` folder or call it by its
+full path (e.g. `C:\Users\you\bin\lazydb.exe`).
 
 ---
 
