@@ -1,6 +1,6 @@
 # lazydb
 
-A fast, keyboard-driven terminal UI for your database.  
+A fast, keyboard-driven terminal UI for your database.
 Think `lazygit` — but for Postgres, MySQL and SQLite.
 
 ![lazydb demo](https://raw.githubusercontent.com/HalxDocs/lazydb/main/assets/demo.gif)
@@ -10,12 +10,20 @@ Think `lazygit` — but for Postgres, MySQL and SQLite.
 ## Features
 
 - Browse tables and rows without leaving your terminal
-- Run raw SQL queries with instant results
-- Row counts per table shown in the sidebar
-- Highlighted row navigation with keyboard
-- Save and reuse database connections by name
-- Works with Postgres, MySQL and SQLite
-- Single binary — no runtime, no dependencies, no install friction
+- **Cell-level cursor** — navigate rows and columns independently
+- **Schema view** — toggle column types and nullability with `s`
+- **Row detail modal** — full values, wrapped, on `Enter`
+- **Sort** by any column (asc → desc → none) with `o`
+- **Filter** rows with substring match (`f`)
+- **Sidebar table search** with `t`
+- **Single-line query** (`/`) and **multi-line SQL editor** (`:`)
+- **Query history** — up/down arrows in the query bar
+- **CSV export** of visible rows (`e`)
+- **Yank** current cell or row to the system clipboard (`y` / `Y`)
+- **Vim-style paging** — `g`, `G`, `Ctrl+d`, `Ctrl+u`
+- NULL, numeric and boolean values colored distinctly
+- Async loading with spinner and live latency in the status bar
+- Saved connections, single binary, no runtime deps
 
 ---
 
@@ -50,13 +58,9 @@ lazydb --driver mysql --dsn "user:pass@tcp(localhost:3306)/mydb"
 lazydb --driver sqlite --dsn ./mydb.sqlite
 ```
 
-### Save a connection
+### Save and reuse a connection
 ```bash
-lazydb --driver postgres --dsn "postgres://user:pass@localhost:5432/mydb?sslmode=disable" --save myapp
-```
-
-### Use a saved connection
-```bash
+lazydb --driver postgres --dsn "postgres://..." --save myapp
 lazydb --conn myapp
 ```
 
@@ -69,36 +73,58 @@ lazydb
 
 ## Keyboard shortcuts
 
+### Navigation
 | Key | Action |
 |-----|--------|
-| `↑` / `k` | Move row up |
-| `↓` / `j` | Move row down |
-| `←` / `h` | Previous table |
-| `→` / `l` | Next table |
-| `/` | Open query bar |
-| `Enter` | Run query |
-| `Esc` | Close query bar / dismiss error |
-| `q` | Quit |
+| `↑` / `↓` / `k` / `j` | move row up / down |
+| `←` / `→` / `h` / `l` | move column cursor |
+| `g` / `G` | jump to first / last row |
+| `Ctrl+d` / `Ctrl+u` | page down / up |
+| `Tab` / `Shift+Tab` | next / prev table |
+| `[` / `]` | next / prev table |
+
+### Tables & data
+| Key | Action |
+|-----|--------|
+| `Enter` | open row detail |
+| `s` | toggle schema view |
+| `o` | cycle sort on current column (asc → desc → none) |
+| `f` | filter rows |
+| `r` | refresh current table |
+| `y` / `Y` | yank cell / yank row as TSV |
+| `e` | export visible rows to CSV |
+
+### Query
+| Key | Action |
+|-----|--------|
+| `/` | single-line query |
+| `:` | multi-line SQL editor |
+| `↑` / `↓` (in query) | history previous / next |
+| `Enter` | run query |
+| `Ctrl+Enter` (editor) | run query |
+| `Esc` | close / dismiss |
+
+### App
+| Key | Action |
+|-----|--------|
+| `t` | search tables |
+| `?` | toggle help overlay |
+| `q` / `Ctrl+c` | quit |
 
 ---
 
-## Roadmap
+## Exports
 
-- [ ] Expand row detail view on `Enter`
-- [ ] Edit and delete rows
-- [ ] Export query results to CSV
-- [ ] Multiple simultaneous connections
-- [ ] Indexes and schema view
-- [ ] MySQL and SQLite full testing
+CSV exports land in `~/.lazydb/exports/<table>-<timestamp>.csv`.
 
 ---
 
 ## Why lazydb?
 
-TablePlus costs money. DBeaver is slow Java bloat. pgAdmin is a browser app.  
+TablePlus costs money. DBeaver is slow Java bloat. pgAdmin is a browser app.
 Developers who live in the terminal have had nothing polished — until now.
 
-`lazydb` is the missing tool. Single binary. Zero config. Works over SSH.  
+`lazydb` is the missing tool. Single binary. Zero config. Works over SSH.
 It feels native because it is native.
 
 ---

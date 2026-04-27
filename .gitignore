@@ -1,0 +1,19 @@
+# build output
+/lazydb
+/lazydb.exe
+/dist/
+
+# local sqlite databases used for development / demos
+*.sqlite
+*.sqlite3
+*.db
+
+# editor / agent state
+/.claude/
+/.idea/
+/.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

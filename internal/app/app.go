@@ -38,7 +38,7 @@ func Run(driver, dsn string) error {
 
 	clearScreen()
 
-	model := tui.NewModel(database)
+	model := tui.NewModelWithDriver(database, driver)
 	p := tea.NewProgram(model, tea.WithAltScreen(), tea.WithMouseCellMotion())
 	if _, err := p.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

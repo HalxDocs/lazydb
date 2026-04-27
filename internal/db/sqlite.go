@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type SQLite struct {
@@ -13,7 +13,7 @@ type SQLite struct {
 }
 
 func (s *SQLite) Connect() error {
-	conn, err := sql.Open("sqlite3", s.dsn)
+	conn, err := sql.Open("sqlite", s.dsn)
 	if err != nil {
 		return fmt.Errorf("sqlite connect: %w", err)
 	}
