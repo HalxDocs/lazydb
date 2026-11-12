@@ -198,8 +198,6 @@ It feels native because it is native.
 
 ---
 
-[![Fund my work on FLOSSAfrica](https://flossafrica.com/badge.svg?theme=dark)](https://flossafrica.com/m/halxdocs?p=lazydb)
-
 ## Contributing
 
 Pull requests are welcome. For major changes please open an issue first.
